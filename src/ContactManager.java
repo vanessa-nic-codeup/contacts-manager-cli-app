@@ -34,7 +34,7 @@ public class ContactManager {
                 3. Search a contact by name.
                 4. Delete an existing contact.
                 5. Exit.
-                Enter an option (1, 2, 3, 4 or 5):
+                Please enter an option (1, 2, 3, 4 or 5):
                  """);
 
         while (wrongInput) {
@@ -44,10 +44,23 @@ public class ContactManager {
             if (userInput < 1 || userInput > 5) {
                 System.out.println("Invalid input, please try again: ");
             } else if (userInput == 1) {
-                System.out.println("view contacts");
+                System.out.println("Name | Phone Number |");
+                System.out.println("-----------------------");
+                printContacts(dataFile); //calling the method below
                 wrongInput = false;
+
             } else if (userInput == 2) {
-                System.out.println("Add contact");
+                System.out.println("Please enter a new contact's name:");
+                String contactName = sc.next();
+                System.out.println("Please enter contact's phone number:");
+                String contactNumber = sc.next();
+
+                Files.write(
+                        Paths.get("data", "contacts.txt"),
+                        Arrays.asList(contactName + " | " + contactNumber + " | "),
+                        StandardOpenOption.APPEND
+                );
+
                 wrongInput = false;
             } else if (userInput == 3) {
                 System.out.println("Search contact");
@@ -63,13 +76,9 @@ public class ContactManager {
 
 
 //printing the contact list:
-//        Files.write(
-//                Paths.get("data", "contacts.txt"),
-//                Arrays.asList("Nicholas (210) 876-0987"), // list with one item
-//                StandardOpenOption.APPEND
-//        );
 
-        printContacts(dataFile); //calling the psv below
+
+
 
     }
 
