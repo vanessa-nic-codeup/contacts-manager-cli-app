@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,29 +7,29 @@ import java.util.*;
 
 public class ContactManager {
     public static Scanner sc = new Scanner(System.in);
-    private String name;
-    private String number;
-
-    public ContactManager(String name, String number) {
-        setName(name);
-        setPhoneNumber(number);
-    }
-
-    // getters
-    public static String getName(ContactManager ele) {
-        return ele.name;
-    }
-    public static String getCategory(ContactManager ele) {
-        return ele.number;
-    }
-
-    //changes movie info, setters
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setPhoneNumber(String number) {
-        this.number = number;
-    }
+//    private String name;
+//    private String number;
+//
+//    public ContactManager(String name, String number) {
+//        setName(name);
+//        setPhoneNumber(number);
+//    }
+//
+//    // getters
+//    public static String getName(ContactManager ele) {
+//        return ele.name;
+//    }
+//    public static String getCategory(ContactManager ele) {
+//        return ele.number;
+//    }
+//
+//    //changes movie info, setters
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//    public void setPhoneNumber(String number) {
+//        this.number = number;
+//    }
 
     public static void main(String[] args) throws IOException {
         String directory = "data";
@@ -46,6 +46,7 @@ public class ContactManager {
             Files.createFile(dataFile);
         }
 
+        Path contactTXTPath = Paths.get(directory, filename);
 
         boolean wrongInput = true;
 
@@ -70,7 +71,7 @@ public class ContactManager {
 
                 System.out.println("Name | Phone Number |");
                 System.out.println("-----------------------");
-                printContacts(dataFile); //calling the method below
+                printContacts(contactTXTPath); //calling the method below
                 wrongInput = false;
 
             } else if (userInput == 2) {
@@ -85,12 +86,12 @@ public class ContactManager {
                     String contactNumber = sc.next();
 
                     String contactName = firstName + " " + lastName;
+                    String contactInfo = contactName + " | " + contactNumber;
 
                     Files.write(
-                            Paths.get("data", "contacts.txt"),
-                            Arrays.asList(contactName + " | " + contactNumber + " | "),
-                            StandardOpenOption.APPEND
-                    );
+                            contactTXTPath,
+                            Arrays.asList(contactInfo),
+                            StandardOpenOption.APPEND);
 
                     System.out.println("Would you like to enter another contact? [y/N]");
                     String response = sc.next();
@@ -102,12 +103,12 @@ public class ContactManager {
 
             } else if (userInput == 3) {
 
-                searchContacts(dataFile);
+                searchContacts(contactTXTPath);
                 wrongInput = false;
 
             } else if (userInput == 4) {
 
-                System.out.println("delete contacts");
+                removeContacts(contactTXTPath);
                 wrongInput = false;
 
             } else if (userInput == 5) {
@@ -122,8 +123,8 @@ public class ContactManager {
     //using IOException instead try/catch method:
     public static void printContacts(Path filePath) throws IOException {
 
-        System.out.println();
         List<String> fileContents = Files.readAllLines(filePath);
+
         for (int i = 0; i < fileContents.size(); i++) {
             System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
         }
@@ -132,6 +133,7 @@ public class ContactManager {
     }
 
     public static void searchContacts(Path filePath) throws IOException {
+
         List<String> fileContents = Files.readAllLines(filePath);
 
         System.out.println("Please enter name you would like to search:");
@@ -142,5 +144,25 @@ public class ContactManager {
                 System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
             }
         }
+    }
+
+    public static void removeContacts(Path filePath) throws IOException {
+
+        List<String> lines = Files.readAllLines(filePath);
+        ArrayList<String> newList = new ArrayList<>();
+
+        System.out.println("Please enter name you would like to remove:");
+        String removeContact = sc.next();
+
+        for (String line : lines) {
+            if (line.equals(removeContact)) {
+                newList.add("hello");
+                continue;
+            }
+            newList.add(line);
+        }
+
+        Files.write(filePath, newList);
+        System.out.println(newList);
     }
 }
