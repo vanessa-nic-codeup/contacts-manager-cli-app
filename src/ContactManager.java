@@ -71,9 +71,11 @@ public class ContactManager {
                     System.out.println("Invalid input, please try again: ");
 
                 } else if (userInput == 1) {
+                    String name = "Name";
+                    String phoneNumber = " Phone Number";
 
-                    System.out.println("Name | Phone Number |");
-                    System.out.println("-----------------------");
+                    System.out.printf("%-20s| %-20s|\n", name, phoneNumber);
+                    System.out.println("-------------------------------------------");
                     printContacts(contactTXTPath); //calling the method below
                     keepGoing = returnToMenu(true);
                     wrongInput = false;
@@ -88,9 +90,12 @@ public class ContactManager {
                         String lastName = sc.next(); // catches the second input
                         System.out.println("Please enter contact's phone number:");
                         String contactNumber = sc.next();
+                        String areaCode = contactNumber.substring(0, 3);
+                        String threeNum = contactNumber.substring(3, 6);
+                        String fourNum = contactNumber.substring(6);
 
                         String contactName = firstName + " " + lastName;
-                        String contactInfo = contactName + " | " + contactNumber;
+                        String contactInfo = contactName + " | " + "(" + areaCode + ") " + threeNum + "-" + fourNum + " |";
 
                         Files.write(
                                 contactTXTPath,
@@ -136,11 +141,14 @@ public class ContactManager {
 
         List<String> fileContents = Files.readAllLines(filePath);
 
+
         for (int i = 0; i < fileContents.size(); i++) {
-            System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
+            String name = fileContents.get(i);
+            String [] peopleNames = name.split("\\|");
+            String heading1 = peopleNames[0]; // contact name
+            String heading2 = peopleNames[1]; // phone numbers
+            System.out.printf("%-20s| %-20s|\n", heading1, heading2);
         }
-
-
     }
 
     public static void searchContacts(Path filePath) throws IOException {
