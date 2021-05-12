@@ -48,9 +48,12 @@ public class ContactManager {
 
         Path contactTXTPath = Paths.get(directory, filename);
 
-        boolean wrongInput = true;
+        boolean keepGoing = false;
 
-        System.out.print("""
+        do {
+            boolean wrongInput = true;
+
+            System.out.print("""
                 1. View contacts.
                 2. Add a new contact.
                 3. Search a contact by name.
@@ -59,65 +62,73 @@ public class ContactManager {
                 Please enter an option (1, 2, 3, 4 or 5):
                  """);
 
-        while (wrongInput) {
+            while (wrongInput) {
 
-            int userInput = sc.nextInt();
+                int userInput = sc.nextInt();
 
-            if (userInput < 1 || userInput > 5) {
+                if (userInput < 1 || userInput > 5) {
 
-                System.out.println("Invalid input, please try again: ");
+                    System.out.println("Invalid input, please try again: ");
 
-            } else if (userInput == 1) {
+                } else if (userInput == 1) {
 
-                System.out.println("Name | Phone Number |");
-                System.out.println("-----------------------");
-                printContacts(contactTXTPath); //calling the method below
-                wrongInput = false;
+                    System.out.println("Name | Phone Number |");
+                    System.out.println("-----------------------");
+                    printContacts(contactTXTPath); //calling the method below
+                    keepGoing = returnToMenu(true);
+                    wrongInput = false;
 
-            } else if (userInput == 2) {
+                } else if (userInput == 2) {
 
-                boolean answer = true;
-                while (answer) {
+                    boolean answer = true;
+                    while (answer) {
 
-                    System.out.println("Please enter a new contact's first and last name:");
-                    String firstName = sc.next(); //this catches the first input
-                    String lastName = sc.next(); // catches the second input
-                    System.out.println("Please enter contact's phone number:");
-                    String contactNumber = sc.next();
+                        System.out.println("Please enter a new contact's first and last name:");
+                        String firstName = sc.next(); //this catches the first input
+                        String lastName = sc.next(); // catches the second input
+                        System.out.println("Please enter contact's phone number:");
+                        String contactNumber = sc.next();
 
-                    String contactName = firstName + " " + lastName;
-                    String contactInfo = contactName + " | " + contactNumber;
+                        String contactName = firstName + " " + lastName;
+                        String contactInfo = contactName + " | " + contactNumber;
 
-                    Files.write(
-                            contactTXTPath,
-                            Arrays.asList(contactInfo),
-                            StandardOpenOption.APPEND);
+                        Files.write(
+                                contactTXTPath,
+                                Arrays.asList(contactInfo),
+                                StandardOpenOption.APPEND);
 
-                    System.out.println("Would you like to enter another contact? [y/N]");
-                    String response = sc.next();
+                        System.out.println("Would you like to enter another contact? [y/N]");
+                        String response = sc.next();
 
-                    answer = response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes");
+                        answer = response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes");
+                    }
+
+                    keepGoing = returnToMenu(true);
+                    wrongInput = false;
+
+
+                } else if (userInput == 3) {
+
+                    searchContacts(contactTXTPath);
+                    keepGoing = returnToMenu(true);
+                    wrongInput = false;
+
+                } else if (userInput == 4) {
+
+                    removeContacts(contactTXTPath);
+                    keepGoing = returnToMenu(true);
+                    wrongInput = false;
+
+                } else if (userInput == 5) {
+
+                    System.out.println("exit program");
+                    wrongInput = false;
+                    keepGoing = false;
+
                 }
-
-                wrongInput = false;
-
-            } else if (userInput == 3) {
-
-                searchContacts(contactTXTPath);
-                wrongInput = false;
-
-            } else if (userInput == 4) {
-
-                removeContacts(contactTXTPath);
-                wrongInput = false;
-
-            } else if (userInput == 5) {
-
-                System.out.println("exit program");
-                wrongInput = false;
-
             }
-        }
+
+        } while (keepGoing);
     }
 
     //using IOException instead try/catch method:
@@ -162,6 +173,18 @@ public class ContactManager {
         }
 
         Files.write(filePath, newList);
-        System.out.println(newList);
+        System.out.println("The contact " + removeContact + " has been removed!");
+    }
+
+    public static boolean returnToMenu(boolean yesNo){
+        System.out.println("Would you like to return to the main menu? [y/N]");
+        String userInput = sc.next();
+
+        if (userInput.equalsIgnoreCase("yes")|| userInput.equalsIgnoreCase("y")) {
+            yesNo = true;
+        } else{
+            yesNo = false;
+        }
+        return yesNo;
     }
 }
