@@ -155,11 +155,10 @@ public class ContactManager {
         String removeContact = sc.next();
 
         for (String line : lines) {
-            if (line.equals(removeContact)) {
-                newList.add("hello");
+            if (line.contains(removeContact)) {
                 continue;
             }
-            newList.add(line);
+            newList.add(line); //adds every line that doesn't equal the contact name entered to delete
         }
 
         Files.write(filePath, newList);
