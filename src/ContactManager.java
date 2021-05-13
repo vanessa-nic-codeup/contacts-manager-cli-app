@@ -154,12 +154,12 @@ public class ContactManager {
         System.out.println("********** SEARCH CONTACT NAME **********\n");
         System.out.println("Please enter name you would like to search:");
         String contactName = sc.next();
+        System.out.println("\nHere is your contact's info: ");
         int foundContacts = 0;
 
             for (int i = 0; i < fileContents.size(); i++) {
                 if (fileContents.get(i).toLowerCase().contains(contactName.toLowerCase())) {
                     foundContacts += 1;
-                    System.out.println("\nHere is your contact's info: ");
                     System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
                 } else if (i == fileContents.size() - 1 && foundContacts == 0) {
                     System.out.println("Contact not found...");
