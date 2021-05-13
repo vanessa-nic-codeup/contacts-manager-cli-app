@@ -6,30 +6,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 public class ContactManager {
+
     public static Scanner sc = new Scanner(System.in);
-//    private String name;
-//    private String number;
-//
-//    public ContactManager(String name, String number) {
-//        setName(name);
-//        setPhoneNumber(number);
-//    }
-//
-//    // getters
-//    public static String getName(ContactManager ele) {
-//        return ele.name;
-//    }
-//    public static String getCategory(ContactManager ele) {
-//        return ele.number;
-//    }
-//
-//    //changes movie info, setters
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//    public void setPhoneNumber(String number) {
-//        this.number = number;
-//    }
 
     public static void main(String[] args) throws IOException {
         String directory = "data";
@@ -54,12 +32,16 @@ public class ContactManager {
             boolean wrongInput = true;
 
             System.out.print("""
-                1. View contacts.
-                2. Add a new contact.
-                3. Search a contact by name.
-                4. Delete an existing contact.
-                5. Exit.
-                Please enter an option (1, 2, 3, 4 or 5):
+                
+                Hello! Please select an option from the menu below:
+                
+                1. View all contacts
+                2. Add new contact
+                3. Search contact by name
+                4. Delete an existing contact
+                5. Exit program
+                
+                Enter the number option here:
                  """);
 
             while (wrongInput) {
@@ -74,8 +56,10 @@ public class ContactManager {
                     String name = "Name";
                     String phoneNumber = " Phone Number";
 
+                    System.out.println("************ VIEW CONTACT LIST ************\n");
                     System.out.printf("%-20s| %-20s|\n", name, phoneNumber);
                     System.out.println("-------------------------------------------");
+
                     printContacts(contactTXTPath); //calling the method below
                     keepGoing = returnToMenu(true);
                     wrongInput = false;
@@ -85,16 +69,26 @@ public class ContactManager {
                     boolean answer = true;
                     while (answer) {
 
+                        System.out.println("********** ADD NEW CONTACT **********\n");
                         System.out.println("Please enter a new contact's first and last name:");
+
                         String firstName = sc.next(); //this catches the first input
                         String lastName = sc.next(); // catches the second input
+
                         System.out.println("Please enter contact's phone number:");
                         String contactNumber = sc.next();
+
                         String areaCode = contactNumber.substring(0, 3);
                         String threeNum = contactNumber.substring(3, 6);
                         String fourNum = contactNumber.substring(6);
 
-                        String contactName = firstName + " " + lastName;
+                        String firstCap = firstName.substring(0,1).toUpperCase();
+                        String lastCap = lastName.substring(0,1).toUpperCase();
+
+                        String firstLower = firstName.substring(1).toLowerCase();
+                        String lastLower = lastName.substring(1).toLowerCase();
+
+                        String contactName = firstCap + firstLower + " " + lastCap + lastLower;
                         String contactInfo = contactName + " | " + "(" + areaCode + ") " + threeNum + "-" + fourNum + " |";
 
                         Files.write(
@@ -102,7 +96,8 @@ public class ContactManager {
                                 Arrays.asList(contactInfo),
                                 StandardOpenOption.APPEND);
 
-                        System.out.println("Would you like to enter another contact? [y/N]");
+                        System.out.println("\nThe contact " + contactName + " has been added!");
+                        System.out.println("\nWould you like to add another contact? [y/N]");
                         String response = sc.next();
 
                         answer = response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes");
@@ -126,7 +121,7 @@ public class ContactManager {
 
                 } else if (userInput == 5) {
 
-                    System.out.println("exit program");
+                    System.out.println("**** THANK YOU FOR USING OUR PROGRAM! :) **** ");
                     wrongInput = false;
                     keepGoing = false;
 
@@ -141,7 +136,6 @@ public class ContactManager {
 
         List<String> fileContents = Files.readAllLines(filePath);
 
-
         for (int i = 0; i < fileContents.size(); i++) {
             String name = fileContents.get(i);
             String [] peopleNames = name.split("\\|");
@@ -154,15 +148,32 @@ public class ContactManager {
     public static void searchContacts(Path filePath) throws IOException {
 
         List<String> fileContents = Files.readAllLines(filePath);
+        boolean tryAgain = true;
 
+        do {
+        System.out.println("********** SEARCH CONTACT NAME **********\n");
         System.out.println("Please enter name you would like to search:");
         String contactName = sc.next();
+        int foundContacts = 0;
 
-        for (int i = 0; i < fileContents.size(); i++) {
-            if (fileContents.get(i).contains(contactName)) {
-                System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
+            for (int i = 0; i < fileContents.size(); i++) {
+                if (fileContents.get(i).toLowerCase().contains(contactName.toLowerCase())) {
+                    foundContacts += 1;
+                    System.out.println("\nHere is your contact's info: ");
+                    System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
+                } else if (i == fileContents.size() - 1 && foundContacts == 0) {
+                    System.out.println("Contact not found...");
+                }
             }
-        }
+            System.out.println("\nWould you like to search again? [y/N]");
+            String userInput = sc.next();
+
+            if (userInput.equalsIgnoreCase("yes")|| userInput.equalsIgnoreCase("y")) {
+                tryAgain = true;
+            } else{
+                break;
+            }
+        } while (tryAgain = true);
     }
 
     public static void removeContacts(Path filePath) throws IOException {
@@ -170,11 +181,14 @@ public class ContactManager {
         List<String> lines = Files.readAllLines(filePath);
         ArrayList<String> newList = new ArrayList<>();
 
-        System.out.println("Please enter name you would like to remove:");
+        System.out.println("********** DELETE CONTACT BY NAME **********\n");
+        printContacts(filePath);
+
+        System.out.println("\nPlease enter the name you would like to remove:");
         String removeContact = sc.next();
 
         for (String line : lines) {
-            if (line.contains(removeContact)) {
+            if (line.toLowerCase().contains(removeContact.toLowerCase())) {
                 continue;
             }
             newList.add(line); //adds every line that doesn't equal the contact name entered to delete
@@ -185,7 +199,7 @@ public class ContactManager {
     }
 
     public static boolean returnToMenu(boolean yesNo){
-        System.out.println("Would you like to return to the main menu? [y/N]");
+        System.out.println("\nWould you like to return to the Main Menu? [y/N]");
         String userInput = sc.next();
 
         if (userInput.equalsIgnoreCase("yes")|| userInput.equalsIgnoreCase("y")) {
@@ -195,4 +209,5 @@ public class ContactManager {
         }
         return yesNo;
     }
+
 }
