@@ -154,7 +154,7 @@ public class ContactManager {
         System.out.println("********** SEARCH CONTACT NAME **********\n");
         System.out.println("Please enter name you would like to search:");
         String contactName = sc.next();
-        System.out.println("\nHere is your contact's info: ");
+        System.out.println("\nHere is your contact's info: \n");
         int foundContacts = 0;
 
             for (int i = 0; i < fileContents.size(); i++) {
